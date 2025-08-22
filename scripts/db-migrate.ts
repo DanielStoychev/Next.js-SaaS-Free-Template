@@ -60,7 +60,7 @@ class DatabaseMigrator {
       console.log('✅ Database migration completed successfully!')
 
     } catch (error) {
-      console.error('❌ Migration failed:', error.message)
+      console.error('❌ Migration failed:', error instanceof Error ? error.message : String(error))
       process.exit(1)
     }
   }
@@ -71,7 +71,7 @@ class DatabaseMigrator {
       execSync('npx prisma db pull --print', { stdio: 'pipe' })
       console.log('✅ Database connection validated')
     } catch (error) {
-      console.error('❌ Database connection failed:', error.message)
+      console.error('❌ Database connection failed:', error instanceof Error ? error.message : String(error))
       throw error
     }
   }
@@ -104,7 +104,7 @@ async function main() {
     await migrator.migrate()
 
   } catch (error) {
-    console.error('💥 Migration process failed:', error.message)
+    console.error('💥 Migration process failed:', error instanceof Error ? error.message : String(error))
     process.exit(1)
   }
 }

@@ -37,8 +37,8 @@ class DatabaseSeeder {
         await this.cleanup()
       }
 
-      await this.seedOrganizations()
-      await this.seedUsers()
+      const organizations = await this.seedOrganizations()
+      await this.seedUsers(organizations)
       await this.seedPlans()
 
       console.log('✅ Database seeding completed successfully!')
@@ -123,7 +123,7 @@ class DatabaseSeeder {
     console.log(`✅ Created ${plans.length} subscription plans`)
   }
 
-  private async seedOrganizations(): Promise<void> {
+  private async seedOrganizations(): Promise<any[]> {
     console.log(`🏢 Creating ${this.options.organizationCount} organizations...`)
 
     const organizations = []
@@ -153,10 +153,9 @@ class DatabaseSeeder {
     return organizations
   }
 
-  private async seedUsers(): Promise<void> {
+  private async seedUsers(organizations: any[]): Promise<void> {
     console.log(`👥 Creating ${this.options.userCount} users...`)
 
-    const organizations = await prisma.organization?.findMany()
     const hashedPassword = await bcrypt.hash('password123', 12)
 
     // Create admin user

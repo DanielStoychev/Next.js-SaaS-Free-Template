@@ -116,6 +116,7 @@
     "@faker-js/faker": "^8.4.1",
     "@hookform/resolvers": "^3.9.0",
     "@playwright/test": "^1.46.0",
+    "@tailwindcss/typography": "^0.5.16",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.0.0",
