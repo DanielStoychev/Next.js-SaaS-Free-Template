@@ -2,7 +2,9 @@
 
 import * as React from 'react'
 import { motion } from 'framer-motion'
-import { User, Bell, Shield, Palette, Database, Zap } from 'lucide-react'
+import { User, Bell, Shield, Palette, Database, Zap, Save, AlertTriangle } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 
 import {
   Card,
@@ -14,16 +16,21 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { api } from '@/trpc/react'
+import { LoadingSpinner } from '@/components/ui/loading'
 
-interface SettingsPageProps {
-  user: {
-    id: string
-    name?: string | null
-    email?: string | null
-    image?: string | null
-    role?: string
-  }
-}
+interface SettingsPageProps {}
 
 interface SettingsSectionProps {
   title: string
@@ -90,7 +97,134 @@ function SettingsSection({
   )
 }
 
-export function SettingsPage({ user }: SettingsPageProps) {
+export function SettingsPage({}: SettingsPageProps) {
+  const { data: session } = useSession()
+  const router = useRouter()
+  
+  // Fetch user profile data
+  const { data: userProfile, isLoading: profileLoading } = api.user.getCurrentUser.useQuery()
+  const { data: preferences, isLoading: preferencesLoading } = api.user.getPreferences.useQuery()
+  
+  // Mutations
+  const updateProfile = api.user.updateProfile.useMutation()
+  const changePassword = api.user.changePassword.useMutation()
+  const updatePreferences = api.user.updatePreferences.useMutation()
+  const deleteAccount = api.user.deleteAccount.useMutation()
+
+  // Queries
+  const exportDataQuery = api.user.exportData.useQuery(undefined, { enabled: false })
+
+  // Form states
+  const [profileForm, setProfileForm] = React.useState({
+    name: '',
+    email: '',
+  })
+  const [passwordForm, setPasswordForm] = React.useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  })
+  const [deleteForm, setDeleteForm] = React.useState({
+    password: '',
+    confirmation: '',
+  })
+
+  // Update form when user data loads
+  React.useEffect(() => {
+    if (userProfile) {
+      setProfileForm({
+        name: userProfile.name || '',
+        email: userProfile.email || '',
+      })
+    }
+  }, [userProfile])
+
+  const handleUpdateProfile = async () => {
+    try {
+      await updateProfile.mutateAsync({
+        name: profileForm.name,
+        email: profileForm.email,
+      })
+      alert('Profile updated successfully')
+    } catch (error) {
+      alert('Failed to update profile')
+    }
+  }
+
+  const handleChangePassword = async () => {
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      alert('New passwords do not match')
+      return
+    }
+
+    try {
+      await changePassword.mutateAsync({
+        currentPassword: passwordForm.currentPassword,
+        newPassword: passwordForm.newPassword,
+      })
+      alert('Password changed successfully')
+      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
+    } catch (error) {
+      alert('Failed to change password')
+    }
+  }
+
+  const handleExportData = async () => {
+    try {
+      const data = await exportDataQuery.refetch()
+      if (data.data) {
+        // Create and download JSON file
+        const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `user-data-${new Date().toISOString().split('T')[0]}.json`
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+        alert('Data exported successfully')
+      }
+    } catch (error) {
+      alert('Failed to export data')
+    }
+  }
+
+  const handleDeleteAccount = async () => {
+    if (deleteForm.confirmation !== 'DELETE') {
+      alert('Please type DELETE to confirm')
+      return
+    }
+
+    try {
+      await deleteAccount.mutateAsync({
+        password: deleteForm.password,
+        confirmation: 'DELETE' as const,
+      })
+      alert('Account deleted successfully')
+      router.push('/')
+    } catch (error) {
+      alert('Failed to delete account')
+    }
+  }
+
+  if (profileLoading || preferencesLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  if (!session || !userProfile) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p>Please sign in to access settings</p>
+      </div>
+    )
+  }
+
+  const user = userProfile
   return (
     <div className='min-h-screen relative overflow-hidden'>
       {/* Colorful animated background */}
@@ -142,22 +276,47 @@ export function SettingsPage({ user }: SettingsPageProps) {
             <div className='space-y-4'>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 <div>
-                  <label className='text-sm font-medium text-muted-foreground'>
+                  <Label htmlFor='name' className='text-sm font-medium text-muted-foreground'>
                     Name
-                  </label>
-                  <p className='text-base font-medium'>
-                    {user.name || 'Not provided'}
-                  </p>
+                  </Label>
+                  <Input
+                    id='name'
+                    value={profileForm.name}
+                    onChange={(e) => setProfileForm(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder='Enter your name'
+                    className='mt-1'
+                  />
                 </div>
                 <div>
-                  <label className='text-sm font-medium text-muted-foreground'>
+                  <Label htmlFor='email' className='text-sm font-medium text-muted-foreground'>
                     Email
-                  </label>
-                  <p className='text-base font-medium'>{user.email}</p>
+                  </Label>
+                  <Input
+                    id='email'
+                    type='email'
+                    value={profileForm.email}
+                    onChange={(e) => setProfileForm(prev => ({ ...prev, email: e.target.value }))}
+                    placeholder='Enter your email'
+                    className='mt-1'
+                  />
                 </div>
               </div>
-              <Button className='gradient-neon text-white hover:shadow-lg hover:shadow-neon-400/25'>
-                Update Profile
+              <Button 
+                onClick={handleUpdateProfile}
+                disabled={updateProfile.isPending}
+                className='gradient-neon text-white hover:shadow-lg hover:shadow-neon-400/25'
+              >
+                {updateProfile.isPending ? (
+                  <>
+                    <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Update Profile
+                  </>
+                )}
               </Button>
             </div>
           </SettingsSection>
@@ -229,12 +388,73 @@ export function SettingsPage({ user }: SettingsPageProps) {
                     Change your account password
                   </p>
                 </div>
-                <Button
-                  variant='outline'
-                  className='glass-cyber border-cyber-400/30'
-                >
-                  Change Password
-                </Button>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant='outline'
+                      className='glass-cyber border-cyber-400/30'
+                    >
+                      <Shield className="w-4 h-4 mr-2" />
+                      Change Password
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="glass-cyber border-cyber-400/30">
+                    <DialogHeader>
+                      <DialogTitle className="gradient-text">Change Password</DialogTitle>
+                      <DialogDescription>
+                        Enter your current password and choose a new one
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="currentPassword">Current Password</Label>
+                        <Input
+                          id="currentPassword"
+                          type="password"
+                          value={passwordForm.currentPassword}
+                          onChange={(e) => setPasswordForm(prev => ({ ...prev, currentPassword: e.target.value }))}
+                          placeholder="Enter current password"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="newPassword">New Password</Label>
+                        <Input
+                          id="newPassword"
+                          type="password"
+                          value={passwordForm.newPassword}
+                          onChange={(e) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
+                          placeholder="Enter new password"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                        <Input
+                          id="confirmPassword"
+                          type="password"
+                          value={passwordForm.confirmPassword}
+                          onChange={(e) => setPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                          placeholder="Confirm new password"
+                        />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        onClick={handleChangePassword}
+                        disabled={changePassword.isPending}
+                        className='gradient-cyber text-white'
+                      >
+                        {changePassword.isPending ? (
+                          <>
+                            <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                            Changing...
+                          </>
+                        ) : (
+                          'Update Password'
+                        )}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
           </SettingsSection>
@@ -312,10 +532,22 @@ export function SettingsPage({ user }: SettingsPageProps) {
                   </p>
                 </div>
                 <Button
+                  onClick={handleExportData}
+                  disabled={exportDataQuery.isFetching}
                   variant='outline'
                   className='glass-plasma border-plasma-400/30'
                 >
-                  Export
+                  {exportDataQuery.isFetching ? (
+                    <>
+                      <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-plasma-400/30 border-t-plasma-400" />
+                      Exporting...
+                    </>
+                  ) : (
+                    <>
+                      <Database className="w-4 h-4 mr-2" />
+                      Export
+                    </>
+                  )}
                 </Button>
               </div>
               <Separator />
@@ -369,6 +601,85 @@ export function SettingsPage({ user }: SettingsPageProps) {
                 >
                   Clear Cache
                 </Button>
+              </div>
+            </div>
+          </SettingsSection>
+
+          {/* Danger Zone */}
+          <SettingsSection
+            title='Danger Zone'
+            description='Irreversible account actions - proceed with caution'
+            icon={AlertTriangle}
+            color='aurora'
+            delay={0.7}
+          >
+            <div className='space-y-4'>
+              <div className='p-4 border border-red-300 bg-red-50 dark:bg-red-900/10 dark:border-red-800 rounded-lg'>
+                <div className='flex items-start space-x-3'>
+                  <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <h4 className="text-sm font-semibold text-red-800 dark:text-red-400">Delete Account</h4>
+                    <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                      Once you delete your account, there is no going back. This will permanently delete your profile, posts, and all associated data.
+                    </p>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button 
+                          variant="destructive" 
+                          size="sm" 
+                          className="mt-3"
+                        >
+                          Delete Account
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="glass-aurora border-red-400/30">
+                        <DialogHeader>
+                          <DialogTitle className="text-red-400">Delete Account</DialogTitle>
+                          <DialogDescription>
+                            This action cannot be undone. Please enter your password and type "DELETE" to confirm.
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="deletePassword">Password</Label>
+                            <Input
+                              id="deletePassword"
+                              type="password"
+                              value={deleteForm.password}
+                              onChange={(e) => setDeleteForm(prev => ({ ...prev, password: e.target.value }))}
+                              placeholder="Enter your password"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="deleteConfirmation">Type "DELETE" to confirm</Label>
+                            <Input
+                              id="deleteConfirmation"
+                              value={deleteForm.confirmation}
+                              onChange={(e) => setDeleteForm(prev => ({ ...prev, confirmation: e.target.value }))}
+                              placeholder="Type DELETE"
+                            />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button
+                            variant="destructive"
+                            onClick={handleDeleteAccount}
+                            disabled={deleteAccount.isPending}
+                          >
+                            {deleteAccount.isPending ? (
+                              <>
+                                <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                                Deleting...
+                              </>
+                            ) : (
+                              'Delete My Account'
+                            )}
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </div>
               </div>
             </div>
           </SettingsSection>

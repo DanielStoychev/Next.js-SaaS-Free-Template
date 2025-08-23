@@ -14,5 +14,5 @@ export default async function Settings() {
     redirect('/signin')
   }
 
-  return <SettingsPage user={session.user} />
+  return <SettingsPage />
 }
