@@ -1,17 +1,20 @@
 # Contributing Guide
 
-Thank you for your interest in contributing to the Next.js SaaS Free Template! This guide will help you get started with contributing to the project.
+Thank you for your interest in contributing to the Next.js SaaS Free Template! This guide will help
+you get started with contributing to the project.
 
 ## Code of Conduct
 
-This project adheres to a code of conduct. By participating, you are expected to uphold this code. Please be respectful, inclusive, and constructive in all interactions.
+This project adheres to a code of conduct. By participating, you are expected to uphold this code.
+Please be respectful, inclusive, and constructive in all interactions.
 
 ## Getting Started
 
 ### Prerequisites
 
 Before you begin, ensure you have the following installed:
-- **Node.js** 20.0.0 or higher
+
+- **Node.js** 22.0.0 or higher (currently tested with 22.16.0)
 - **pnpm** 8.0.0 or higher
 - **Git**
 - **PostgreSQL** (for local development)
@@ -21,23 +24,27 @@ Before you begin, ensure you have the following installed:
 1. **Fork the repository** on GitHub
 
 2. **Clone your fork**:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/Next.js-SaaS-Free-Template.git
    cd Next.js-SaaS-Free-Template
    ```
 
 3. **Set up the development environment**:
+
    ```bash
    make setup
    ```
 
 4. **Configure environment variables**:
+
    ```bash
    cp .env.example .env.local
    # Edit .env.local with your values
    ```
 
 5. **Set up the database**:
+
    ```bash
    make db-migrate
    make db-seed
@@ -76,6 +83,7 @@ Understanding the project structure will help you navigate and contribute effect
 ### 1. Create a Branch
 
 Create a descriptive branch name:
+
 ```bash
 git checkout -b feat/user-dashboard
 git checkout -b fix/stripe-webhook-handling
@@ -85,6 +93,7 @@ git checkout -b docs/update-readme
 ### 2. Make Your Changes
 
 Follow our coding standards:
+
 - **TypeScript strict mode**: No `any` types
 - **ESLint**: Follow the configured rules
 - **Prettier**: Code formatting is enforced
@@ -93,6 +102,7 @@ Follow our coding standards:
 ### 3. Write Tests
 
 All contributions must include appropriate tests:
+
 - **Unit tests** for utility functions and business logic
 - **Component tests** for React components
 - **Integration tests** for API endpoints
@@ -101,6 +111,7 @@ All contributions must include appropriate tests:
 ### 4. Run Quality Checks
 
 Before committing, run these checks:
+
 ```bash
 make typecheck    # TypeScript compilation
 make lint         # ESLint checking
@@ -111,6 +122,7 @@ make coverage     # Test coverage
 ### 5. Commit Your Changes
 
 Use conventional commit messages:
+
 ```bash
 git commit -m "feat(auth): add magic link authentication"
 git commit -m "fix(billing): handle failed stripe webhooks"
@@ -188,7 +200,7 @@ const createUserProcedure = protectedProcedure
     z.object({
       name: z.string().min(1).max(100),
       email: z.string().email(),
-      organizationId: z.string().uuid()
+      organizationId: z.string().uuid(),
     })
   )
   .mutation(async ({ input, ctx }) => {
@@ -213,7 +225,7 @@ model User {
   organization   Organization @relation(fields: [organizationId], references: [id])
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-  
+
   @@index([organizationId])
 }
 ```
@@ -223,6 +235,7 @@ model User {
 ### Unit Tests
 
 Test individual functions and modules:
+
 ```typescript
 // src/lib/utils.test.ts
 import { describe, it, expect } from 'vitest'
@@ -232,9 +245,9 @@ describe('calculateMRR', () => {
   it('should calculate monthly recurring revenue correctly', () => {
     const subscriptions = [
       { amount: 2000, interval: 'month' },
-      { amount: 24000, interval: 'year' }
+      { amount: 24000, interval: 'year' },
     ]
-    
+
     expect(calculateMRR(subscriptions)).toBe(4000) // $40.00
   })
 })
@@ -243,6 +256,7 @@ describe('calculateMRR', () => {
 ### Component Tests
 
 Test React components:
+
 ```typescript
 // src/components/ui/button.test.tsx
 import { render, screen } from '@testing-library/react'
@@ -251,7 +265,7 @@ import { Button } from './button'
 describe('Button', () => {
   it('renders with correct variant classes', () => {
     render(<Button variant="primary">Click me</Button>)
-    
+
     const button = screen.getByRole('button', { name: /click me/i })
     expect(button).toHaveClass('bg-primary')
   })
@@ -261,17 +275,18 @@ describe('Button', () => {
 ### E2E Tests
 
 Test critical user flows:
+
 ```typescript
 // tests/e2e/auth.spec.ts
 import { test, expect } from '@playwright/test'
 
 test('user can sign up and create organization', async ({ page }) => {
   await page.goto('/signup')
-  
+
   await page.fill('[name="email"]', 'test@example.com')
   await page.fill('[name="name"]', 'Test User')
   await page.click('[type="submit"]')
-  
+
   await expect(page).toHaveURL('/onboarding')
 })
 ```
@@ -308,24 +323,29 @@ Before submitting a PR, ensure:
 
 ```markdown
 ## Description
+
 Brief description of the changes.
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Testing
+
 - [ ] Unit tests added/updated
 - [ ] Integration tests added/updated
 - [ ] E2E tests added/updated
 - [ ] Manual testing completed
 
 ## Screenshots (if applicable)
+
 Add screenshots for UI changes.
 
 ## Breaking Changes
+
 List any breaking changes and migration steps.
 ```
 
@@ -342,6 +362,7 @@ List any breaking changes and migration steps.
 ### Bug Reports
 
 When reporting bugs:
+
 - Use the bug report template
 - Provide reproduction steps
 - Include environment details
@@ -350,6 +371,7 @@ When reporting bugs:
 ### Feature Requests
 
 When requesting features:
+
 - Use the feature request template
 - Explain the use case and value
 - Consider implementation complexity
@@ -358,6 +380,7 @@ When requesting features:
 ### Questions
 
 For questions:
+
 - Check existing documentation first
 - Search existing issues
 - Provide context and details
@@ -366,6 +389,7 @@ For questions:
 ## Release Process
 
 The project follows semantic versioning:
+
 - **Major** (X.0.0): Breaking changes
 - **Minor** (0.X.0): New features (backward compatible)
 - **Patch** (0.0.X): Bug fixes
@@ -373,6 +397,7 @@ The project follows semantic versioning:
 ### Changelog
 
 All changes are documented in `CHANGELOG.md` following the format:
+
 - **Added**: New features
 - **Changed**: Changes to existing functionality
 - **Deprecated**: Soon-to-be removed features
@@ -391,6 +416,7 @@ All changes are documented in `CHANGELOG.md` following the format:
 ### Recognition
 
 Contributors are recognized in:
+
 - **README**: Contributors section
 - **Release notes**: Major contributions mentioned
 - **GitHub**: Contributor graph and statistics

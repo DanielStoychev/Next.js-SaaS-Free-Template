@@ -1,10 +1,12 @@
 # Observability Guide
 
-This document outlines the observability practices, monitoring, logging, and performance tracking implemented in the Next.js SaaS Template.
+This document outlines the observability practices, monitoring, logging, and performance tracking
+implemented in the Next.js SaaS Template.
 
 ## Overview
 
-Observability is crucial for maintaining a production SaaS application. Our observability stack provides insights into application performance, user behavior, errors, and system health.
+Observability is crucial for maintaining a production SaaS application. Our observability stack
+provides insights into application performance, user behavior, errors, and system health.
 
 ## Logging
 
@@ -18,12 +20,15 @@ import pino from 'pino'
 
 const logger = pino({
   level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
-  transport: process.env.NODE_ENV !== 'production' ? {
-    target: 'pino-pretty',
-    options: {
-      colorize: true
-    }
-  } : undefined
+  transport:
+    process.env.NODE_ENV !== 'production'
+      ? {
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+          },
+        }
+      : undefined,
 })
 
 // Usage with request context
@@ -35,17 +40,20 @@ export const createRequestLogger = (requestId: string) => {
 ### Log Levels and Categories
 
 #### Error Logs
+
 - **Authentication failures**: Failed login attempts, invalid tokens
 - **Authorization denials**: Insufficient permissions
 - **Payment errors**: Stripe webhook failures, billing issues
 - **System errors**: Database connection issues, external API failures
 
 #### Info Logs
+
 - **User actions**: Login, signup, subscription changes
 - **Business events**: New organizations created, invitations sent
 - **System events**: Database migrations, deployments
 
 #### Debug Logs (Development only)
+
 - **Request/Response**: API call details
 - **Query performance**: Slow database queries
 - **Cache operations**: Cache hits/misses
@@ -58,22 +66,25 @@ Every request gets a unique identifier for tracing:
 // middleware.ts
 export function middleware(request: NextRequest) {
   const requestId = crypto.randomUUID()
-  
+
   // Add to request headers
   request.headers.set('x-request-id', requestId)
-  
+
   // Log request start
-  logger.info({
-    requestId,
-    method: request.method,
-    url: request.url,
-    userAgent: request.headers.get('user-agent')
-  }, 'Request started')
-  
+  logger.info(
+    {
+      requestId,
+      method: request.method,
+      url: request.url,
+      userAgent: request.headers.get('user-agent'),
+    },
+    'Request started'
+  )
+
   return NextResponse.next({
     headers: {
-      'x-request-id': requestId
-    }
+      'x-request-id': requestId,
+    },
   })
 }
 ```
@@ -90,10 +101,10 @@ import * as Sentry from '@sentry/nextjs'
 
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-  
+
   // Performance monitoring
   tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
-  
+
   // Error filtering
   beforeSend(event, hint) {
     // Don't send client-side 404 errors
@@ -102,13 +113,13 @@ Sentry.init({
     }
     return event
   },
-  
+
   // User context
   initialScope: {
     tags: {
-      component: 'nextjs-saas-template'
-    }
-  }
+      component: 'nextjs-saas-template',
+    },
+  },
 })
 ```
 
@@ -132,7 +143,7 @@ export function ErrorBoundary({ children }: { children: React.ReactNode }) {
           <p className="mt-2 text-muted-foreground">
             We've been notified of this error and will fix it soon.
           </p>
-          <button 
+          <button
             onClick={resetError}
             className="mt-4 rounded bg-primary px-4 py-2 text-primary-foreground"
           >
@@ -168,7 +179,7 @@ function sendToAnalytics(metric: any) {
       value: Math.round(metric.value),
       metric_id: metric.id,
       metric_value: metric.value,
-      metric_delta: metric.delta
+      metric_delta: metric.delta,
     })
   }
 }
@@ -196,28 +207,30 @@ const globalForPrisma = globalThis as unknown as {
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    log: process.env.NODE_ENV === 'development' 
-      ? ['query', 'error', 'warn'] 
-      : ['error'],
-    
+    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+
     // Query event logging
     __internal: {
       engine: {
-        enableEngineDebugMode: process.env.NODE_ENV === 'development'
-      }
-    }
+        enableEngineDebugMode: process.env.NODE_ENV === 'development',
+      },
+    },
   })
 
 // Log slow queries in production
 if (process.env.NODE_ENV === 'production') {
-  prisma.$on('query', (e) => {
-    if (e.duration > 1000) { // Log queries > 1 second
-      logger.warn({
-        query: e.query,
-        params: e.params,
-        duration: e.duration,
-        target: e.target
-      }, 'Slow database query detected')
+  prisma.$on('query', e => {
+    if (e.duration > 1000) {
+      // Log queries > 1 second
+      logger.warn(
+        {
+          query: e.query,
+          params: e.params,
+          duration: e.duration,
+          target: e.target,
+        },
+        'Slow database query detected'
+      )
     }
   })
 }
@@ -243,33 +256,36 @@ export class Metrics {
   static trackUserSignup(userId: string, source: string) {
     this.track('user_signup', 1, { source, userId })
   }
-  
+
   static trackSubscriptionCreated(plan: string, amount: number) {
     this.track('subscription_created', amount, { plan })
   }
-  
+
   static trackFeatureUsage(feature: string, userId: string) {
     this.track('feature_usage', 1, { feature, userId })
   }
-  
+
   // System metrics
   static trackApiRequest(endpoint: string, method: string, duration: number) {
     this.track('api_request', duration, { endpoint, method })
   }
-  
+
   static trackDatabaseQuery(operation: string, duration: number) {
     this.track('db_query', duration, { operation })
   }
-  
+
   private static track(name: string, value: number, labels?: Record<string, string>) {
     // Implementation depends on your metrics backend
     // Examples: Prometheus, DataDog, New Relic
-    logger.info({
-      metric: name,
-      value,
-      labels,
-      timestamp: new Date().toISOString()
-    }, 'Metric tracked')
+    logger.info(
+      {
+        metric: name,
+        value,
+        labels,
+        timestamp: new Date().toISOString(),
+      },
+      'Metric tracked'
+    )
   }
 }
 ```
@@ -287,27 +303,27 @@ export async function GET() {
   try {
     // Check database connectivity
     await prisma.$queryRaw`SELECT 1`
-    
+
     // Check external service connectivity
     const stripeHealthy = await checkStripeHealth()
-    
+
     const health = {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       services: {
         database: 'healthy',
-        stripe: stripeHealthy ? 'healthy' : 'degraded'
+        stripe: stripeHealthy ? 'healthy' : 'degraded',
       },
-      version: process.env.npm_package_version
+      version: process.env.npm_package_version,
     }
-    
+
     return NextResponse.json(health)
   } catch (error) {
     return NextResponse.json(
       {
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
-        error: error.message
+        error: error.message,
       },
       { status: 503 }
     )
@@ -338,30 +354,30 @@ const alertConfig = {
   errorRate: {
     threshold: 0.05, // 5% error rate
     window: '5m',
-    condition: 'above'
+    condition: 'above',
   },
-  
+
   // Performance alerts
   responseTime: {
     threshold: 2000, // 2 seconds
     percentile: 95,
     window: '10m',
-    condition: 'above'
+    condition: 'above',
   },
-  
+
   // Business alerts
   failedPayments: {
     threshold: 5,
     window: '1h',
-    condition: 'above'
+    condition: 'above',
   },
-  
+
   // Infrastructure alerts
   databaseConnections: {
     threshold: 80, // % of max connections
     window: '5m',
-    condition: 'above'
-  }
+    condition: 'above',
+  },
 }
 ```
 
@@ -438,6 +454,7 @@ interface LogEntry {
 ## Monitoring Checklist
 
 ### Pre-Production
+
 - [ ] Error tracking configured
 - [ ] Performance monitoring enabled
 - [ ] Health checks implemented
@@ -446,6 +463,7 @@ interface LogEntry {
 - [ ] Log aggregation configured
 
 ### Post-Production
+
 - [ ] Monitor error rates and performance
 - [ ] Review and adjust alert thresholds
 - [ ] Analyze user behavior patterns
@@ -456,12 +474,14 @@ interface LogEntry {
 ## Tools and Services
 
 ### Recommended Stack
+
 - **Sentry**: Error tracking and performance monitoring
 - **Vercel Analytics**: Built-in Next.js analytics
 - **Prisma Pulse**: Real-time database monitoring
 - **Stripe Dashboard**: Payment and billing insights
 
 ### Alternative Options
+
 - **DataDog**: Comprehensive monitoring and logging
 - **New Relic**: Application performance monitoring
 - **LogRocket**: Session replay and frontend monitoring
@@ -470,18 +490,21 @@ interface LogEntry {
 ## Getting Started
 
 1. **Configure Sentry** (optional):
+
    ```bash
    pnpm add @sentry/nextjs
    # Follow Sentry setup wizard
    ```
 
 2. **Set up health checks**:
+
    ```typescript
    // Implement health check endpoint
    // Configure monitoring service to check /api/health
    ```
 
 3. **Enable structured logging**:
+
    ```typescript
    // Use logger throughout application
    logger.info({ userId, action }, 'User performed action')
@@ -492,4 +515,5 @@ interface LogEntry {
    - Configure alerts and notifications
    - Train team on dashboard usage
 
-Remember: Observability is most effective when implemented from the start and continuously improved based on insights gained from production usage.
+Remember: Observability is most effective when implemented from the start and continuously improved
+based on insights gained from production usage.

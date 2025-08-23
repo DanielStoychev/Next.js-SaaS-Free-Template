@@ -2,20 +2,51 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project
+adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.1.0] - 2025-08-22
+
+### Updated
+
+- **Major Framework Upgrades**
+  - Next.js upgraded from 14.x to **15.5.0** (latest stable)
+  - Prisma ORM upgraded from 5.x to **6.14.0**
+  - Node.js requirement updated to **22.0.0** or higher (tested with 22.16.0)
+  - React maintained at **18.3.1** (stable)
+  - TypeScript maintained at **5.5.4** (stable)
+
+- **Next.js 15 Compatibility Fixes**
+  - Fixed client-side environment variable access errors
+  - Implemented proper server/client separation for auth components
+  - Added async API handling for `searchParams` and `headers()`
+  - Updated authentication flow to use `next-auth/react` for client components
+  - Added hydration mismatch fixes with `suppressHydrationWarning`
+
+- **Prisma 6.14.0 Integration**
+  - Updated database client instantiation for Prisma 6.x patterns
+  - Regenerated Prisma client with new type definitions
+  - Fixed server-only database access with environment variable protection
+  - Updated all import patterns for Prisma 6.x compatibility
+
+- **Documentation Updates**
+  - Updated all version references across documentation
+  - Revised architecture diagrams with current version numbers
+  - Updated ADR-0001 with latest technology stack versions
+  - Enhanced contributing guide with Node.js 22.x requirements
+
 ### Added
-- Initial project structure and configuration
-- Comprehensive documentation and guides
-- GitHub configuration templates
-- Development tooling setup (Makefile, scripts)
+
+- Comprehensive issue resolution documentation
+- Next.js 15 upgrade completion guide
+- Client-side providers component for proper authentication setup
 
 ## [1.0.0] - 2025-08-22
 
 ### Added
+
 - **Project Foundation**
   - Next.js 14 with App Router and TypeScript strict mode
   - Complete project structure following best practices
@@ -61,17 +92,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 
 #### Core Framework
+
 - next@14.2.5 - React framework with App Router
 - react@18.3.1 - React library
 - typescript@5.5.4 - TypeScript language support
 
 #### Authentication & Database
+
 - next-auth@5.0.0-beta.20 - Authentication solution
 - @auth/prisma-adapter@2.4.0 - Database adapter for NextAuth
 - @prisma/client@5.19.0 - Database client
 - prisma@5.19.0 - Database toolkit
 
 #### API & State Management
+
 - @trpc/server@11.0.0-rc.477 - End-to-end typesafe APIs
 - @trpc/client@11.0.0-rc.477 - tRPC client
 - @trpc/react-query@11.0.0-rc.477 - React Query integration
@@ -79,8 +113,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - zod@3.23.8 - Schema validation
 
 #### UI & Styling
+
 - tailwindcss@3.4.9 - Utility-first CSS framework
-- @radix-ui/* - Primitive UI components for accessibility
+- @radix-ui/\* - Primitive UI components for accessibility
 - class-variance-authority@0.7.0 - Component variant management
 - clsx@2.1.1 - Conditional className utility
 - tailwind-merge@2.5.2 - Merge Tailwind classes
@@ -88,15 +123,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - next-themes@0.3.0 - Theme management
 
 #### Payment Processing
+
 - stripe@16.8.0 - Stripe payment processing
 
 #### Development & Testing
+
 - vitest@2.0.5 - Testing framework
 - @testing-library/react@16.0.0 - React testing utilities
 - @playwright/test@1.46.0 - End-to-end testing
 - @vitejs/plugin-react@4.3.1 - Vite React plugin
 
 #### Code Quality
+
 - eslint@8.57.0 - JavaScript/TypeScript linting
 - prettier@3.3.3 - Code formatting
 - @typescript-eslint/parser@8.0.1 - TypeScript ESLint parser
@@ -104,6 +142,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - lint-staged@15.2.8 - Pre-commit file linting
 
 #### Monitoring & Observability
+
 - @sentry/nextjs@8.25.0 - Error tracking and performance monitoring
 - pino@9.3.2 - High-performance logging
 - pino-pretty@11.2.2 - Pretty logging for development
@@ -137,6 +176,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Development Commands
 
 All development tasks available through make:
+
 - `make setup` - Complete project setup
 - `make dev` - Start development server
 - `make build` - Production build
@@ -151,7 +191,7 @@ All development tasks available through make:
 ## Legend
 
 - 🎉 **Added**: New features and functionality
-- 🔄 **Changed**: Changes to existing functionality  
+- 🔄 **Changed**: Changes to existing functionality
 - 🗑️ **Deprecated**: Soon-to-be removed features
 - ❌ **Removed**: Removed features and functionality
 - 🐛 **Fixed**: Bug fixes and corrections
@@ -159,9 +199,14 @@ All development tasks available through make:
 
 ## Release Notes
 
-This is the initial release of the Next.js SaaS Free Template, providing a comprehensive foundation for building modern, scalable SaaS applications. The template includes everything needed to start development immediately while following industry best practices for security, performance, and maintainability.
+This is the initial release of the Next.js SaaS Free Template, providing a comprehensive foundation
+for building modern, scalable SaaS applications. The template includes everything needed to start
+development immediately while following industry best practices for security, performance, and
+maintainability.
 
-The template is designed to showcase professional development practices and would be suitable for demonstrating technical skills to potential employers or as a starting point for real-world SaaS applications.
+The template is designed to showcase professional development practices and would be suitable for
+demonstrating technical skills to potential employers or as a starting point for real-world SaaS
+applications.
 
 ## Future Roadmap
 
