@@ -26,9 +26,12 @@ export function formatCurrency(cents: number, currency = 'USD'): string {
 /**
  * Format date to localized string
  */
-export function formatDate(date: Date | string, options?: Intl.DateTimeFormatOptions): string {
+export function formatDate(
+  date: Date | string,
+  options?: Intl.DateTimeFormatOptions
+): string {
   const dateObj = typeof date === 'string' ? new Date(date) : date
-  
+
   return dateObj.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -95,7 +98,7 @@ export function capitalize(str: string): string {
 export function getInitials(name: string): string {
   return name
     .split(' ')
-    .map((word) => word.charAt(0))
+    .map(word => word.charAt(0))
     .join('')
     .toUpperCase()
     .slice(0, 2)
@@ -107,11 +110,11 @@ export function getInitials(name: string): string {
 export function generateRandomString(length: number): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
   let result = ''
-  
+
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length))
   }
-  
+
   return result
 }
 
@@ -119,7 +122,7 @@ export function generateRandomString(length: number): string {
  * Sleep function for async operations
  */
 export function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms))
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 /**
@@ -130,13 +133,13 @@ export function debounce<T extends (...args: any[]) => any>(
   wait: number
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout | undefined
-  
+
   return (...args: Parameters<T>) => {
     const later = () => {
       clearTimeout(timeout)
       func(...args)
     }
-    
+
     clearTimeout(timeout)
     timeout = setTimeout(later, wait)
   }
@@ -150,7 +153,7 @@ export function throttle<T extends (...args: any[]) => any>(
   limit: number
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean
-  
+
   return (...args: Parameters<T>) => {
     if (!inThrottle) {
       func.apply(null, args)
@@ -186,7 +189,7 @@ export function omit<T extends Record<string, any>, K extends keyof T>(
   keys: K[]
 ): Omit<T, K> {
   const result = { ...obj }
-  keys.forEach((key) => delete result[key])
+  keys.forEach(key => delete result[key])
   return result
 }
 
@@ -198,7 +201,7 @@ export function pick<T extends Record<string, any>, K extends keyof T>(
   keys: K[]
 ): Pick<T, K> {
   const result = {} as Pick<T, K>
-  keys.forEach((key) => {
+  keys.forEach(key => {
     if (key in obj) {
       result[key] = obj[key]
     }
@@ -212,14 +215,14 @@ export function pick<T extends Record<string, any>, K extends keyof T>(
 export function get(obj: any, path: string, defaultValue?: any): any {
   const keys = path.split('.')
   let result = obj
-  
+
   for (const key of keys) {
     if (result == null || typeof result !== 'object') {
       return defaultValue
     }
     result = result[key as keyof typeof result]
   }
-  
+
   return result !== undefined ? result : defaultValue
 }
 
@@ -229,7 +232,7 @@ export function get(obj: any, path: string, defaultValue?: any): any {
 export function set(obj: any, path: string, value: any): void {
   const keys = path.split('.')
   let current = obj
-  
+
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i]!
     if (!(key in current) || typeof current[key] !== 'object') {
@@ -237,7 +240,7 @@ export function set(obj: any, path: string, value: any): void {
     }
     current = current[key]
   }
-  
+
   const lastKey = keys[keys.length - 1]!
   current[lastKey] = value
 }

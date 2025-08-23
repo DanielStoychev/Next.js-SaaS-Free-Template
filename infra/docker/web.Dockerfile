@@ -1,8 +1,8 @@
 # Next.js SaaS Template - Web Application Dockerfile
 # Multi-stage build for optimized production image
 
-# Base stage with Node.js
-FROM node:20-alpine AS base
+# Base stage with Node.js 22
+FROM node:22-alpine AS base
 RUN corepack enable
 WORKDIR /app
 

@@ -25,12 +25,14 @@ class DatabaseSeeder {
     this.options = {
       userCount: 10,
       organizationCount: 3,
-      ...options
+      ...options,
     }
   }
 
   async seed(): Promise<void> {
-    console.log(`🌱 Seeding database for ${this.options.environment} environment...`)
+    console.log(
+      `🌱 Seeding database for ${this.options.environment} environment...`
+    )
 
     try {
       if (this.options.reset) {
@@ -42,7 +44,6 @@ class DatabaseSeeder {
       await this.seedPlans()
 
       console.log('✅ Database seeding completed successfully!')
-
     } catch (error) {
       console.error('❌ Seeding failed:', error)
       throw error
@@ -53,7 +54,7 @@ class DatabaseSeeder {
 
   private async cleanup(): Promise<void> {
     console.log('🧹 Cleaning up existing data...')
-    
+
     // Delete in order due to foreign key constraints
     await prisma.subscription?.deleteMany()
     await prisma.membership?.deleteMany()
@@ -73,50 +74,46 @@ class DatabaseSeeder {
         name: 'Free',
         description: 'Perfect for getting started',
         price: 0,
-        interval: 'month' as const,
-        features: [
-          'Up to 3 projects',
-          'Basic analytics',
-          'Email support'
-        ],
-        stripePriceId: null
+        interval: 'MONTH' as const,
+        features: ['Up to 3 projects', 'Basic analytics', 'Email support'],
+        stripePriceId: null,
       },
       {
         id: 'pro',
         name: 'Pro',
         description: 'For growing businesses',
         price: 1900, // $19.00
-        interval: 'month' as const,
+        interval: 'MONTH' as const,
         features: [
           'Unlimited projects',
           'Advanced analytics',
           'Priority email support',
-          'API access'
+          'API access',
         ],
-        stripePriceId: 'price_pro_monthly' // Would be real Stripe price ID
+        stripePriceId: 'price_pro_monthly', // Would be real Stripe price ID
       },
       {
         id: 'team',
         name: 'Team',
         description: 'For larger organizations',
         price: 4900, // $49.00
-        interval: 'month' as const,
+        interval: 'MONTH' as const,
         features: [
           'Everything in Pro',
           'Team collaboration',
           'Custom integrations',
           'Phone support',
-          'SLA guarantee'
+          'SLA guarantee',
         ],
-        stripePriceId: 'price_team_monthly' // Would be real Stripe price ID
-      }
+        stripePriceId: 'price_team_monthly', // Would be real Stripe price ID
+      },
     ]
 
     for (const plan of plans) {
       await prisma.plan?.upsert({
         where: { id: plan.id },
         update: plan,
-        create: plan
+        create: plan,
       })
     }
 
@@ -124,7 +121,9 @@ class DatabaseSeeder {
   }
 
   private async seedOrganizations(): Promise<any[]> {
-    console.log(`🏢 Creating ${this.options.organizationCount} organizations...`)
+    console.log(
+      `🏢 Creating ${this.options.organizationCount} organizations...`
+    )
 
     const organizations = []
 
@@ -140,10 +139,10 @@ class DatabaseSeeder {
             theme: faker.helpers.arrayElement(['light', 'dark', 'system']),
             notifications: {
               email: faker.datatype.boolean(),
-              push: faker.datatype.boolean()
-            }
-          }
-        }
+              push: faker.datatype.boolean(),
+            },
+          },
+        },
       })
 
       organizations.push(organization)
@@ -165,8 +164,8 @@ class DatabaseSeeder {
         email: 'admin@example.com',
         emailVerified: new Date(),
         image: faker.image.avatar(),
-        password: hashedPassword
-      }
+        password: hashedPassword,
+      },
     })
 
     // Create admin membership in first organization
@@ -175,8 +174,8 @@ class DatabaseSeeder {
         data: {
           userId: adminUser.id,
           organizationId: organizations[0].id,
-          role: 'OWNER'
-        }
+          role: 'OWNER',
+        },
       })
     }
 
@@ -189,8 +188,8 @@ class DatabaseSeeder {
           email: faker.internet.email(),
           emailVerified: faker.datatype.boolean() ? new Date() : null,
           image: faker.image.avatar(),
-          password: hashedPassword
-        }
+          password: hashedPassword,
+        },
       })
 
       // Assign to random organization
@@ -202,8 +201,8 @@ class DatabaseSeeder {
           data: {
             userId: user.id,
             organizationId: randomOrg.id,
-            role: role as any
-          }
+            role: role as any,
+          },
         })
       }
 
@@ -214,7 +213,11 @@ class DatabaseSeeder {
     console.log('📧 Admin login: admin@example.com / password123')
   }
 
-  async createTestUser(email: string, name: string, organizationName: string): Promise<any> {
+  async createTestUser(
+    email: string,
+    name: string,
+    organizationName: string
+  ): Promise<any> {
     const hashedPassword = await bcrypt.hash('password123', 12)
 
     // Create or find organization
@@ -224,8 +227,8 @@ class DatabaseSeeder {
       create: {
         name: organizationName,
         slug: organizationName.toLowerCase().replace(/\s+/g, '-'),
-        description: `${organizationName} organization`
-      }
+        description: `${organizationName} organization`,
+      },
     })
 
     // Create user
@@ -235,8 +238,8 @@ class DatabaseSeeder {
         email,
         emailVerified: new Date(),
         image: faker.image.avatar(),
-        password: hashedPassword
-      }
+        password: hashedPassword,
+      },
     })
 
     // Create membership
@@ -244,8 +247,8 @@ class DatabaseSeeder {
       data: {
         userId: user.id,
         organizationId: organization.id,
-        role: 'OWNER'
-      }
+        role: 'OWNER',
+      },
     })
 
     console.log(`✅ Created test user: ${email} / password123`)
@@ -256,12 +259,17 @@ class DatabaseSeeder {
 // CLI interface
 async function main() {
   const args = process.argv.slice(2)
-  
+
   const options: SeedOptions = {
-    environment: (process.env.NODE_ENV as 'development' | 'test') || 'development',
+    environment:
+      (process.env.NODE_ENV as 'development' | 'test') || 'development',
     reset: args.includes('--reset'),
-    userCount: parseInt(args.find(arg => arg.startsWith('--users='))?.split('=')[1] || '10'),
-    organizationCount: parseInt(args.find(arg => arg.startsWith('--orgs='))?.split('=')[1] || '3')
+    userCount: parseInt(
+      args.find(arg => arg.startsWith('--users='))?.split('=')[1] || '10'
+    ),
+    organizationCount: parseInt(
+      args.find(arg => arg.startsWith('--orgs='))?.split('=')[1] || '3'
+    ),
   }
 
   const seeder = new DatabaseSeeder(options)

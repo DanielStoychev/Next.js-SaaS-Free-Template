@@ -2,14 +2,9 @@
 const nextConfig = {
   // Enable experimental features
   experimental: {
-    // Enable Server Actions
-    serverActions: true,
-    
     // Enable optimizePackageImports for better performance
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
-    
-    // Enable instrumentation for monitoring
-    instrumentationHook: true,
+    // Note: serverActions and instrumentationHook are now enabled by default in Next.js 15
   },
 
   // Compiler options
@@ -94,8 +89,7 @@ const nextConfig = {
     },
   },
 
-  // Disable telemetry in CI
-  telemetry: false,
+  // Note: telemetry is disabled by default in Next.js 15
 }
 
 module.exports = nextConfig

@@ -16,11 +16,13 @@ export const env = createEnv({
     DATABASE_URL: z.string().url(),
 
     // NextAuth.js
-    NEXTAUTH_SECRET: z.string().min(32, 'NEXTAUTH_SECRET must be at least 32 characters'),
+    NEXTAUTH_SECRET: z
+      .string()
+      .min(32, 'NEXTAUTH_SECRET must be at least 32 characters'),
     NEXTAUTH_URL: z.preprocess(
       // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
       // Since NextAuth.js automatically uses the VERCEL_URL if present.
-      (str) => process.env.VERCEL_URL ?? str,
+      str => process.env.VERCEL_URL ?? str,
       // VERCEL_URL doesn't include `https` so it can't be validated as a URL
       process.env.VERCEL ? z.string() : z.string().url()
     ),
@@ -30,10 +32,16 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string().optional(),
     GITHUB_CLIENT_ID: z.string().optional(),
     GITHUB_CLIENT_SECRET: z.string().optional(),
+    DISCORD_CLIENT_ID: z.string().optional(),
+    DISCORD_CLIENT_SECRET: z.string().optional(),
 
-    // Stripe
-    STRIPE_SECRET_KEY: z.string().startsWith('sk_'),
-    STRIPE_WEBHOOK_SECRET: z.string().startsWith('whsec_'),
+    // Email Providers
+    RESEND_API_KEY: z.string().optional(),
+    EMAIL_FROM: z.string().email().default('noreply@example.com'),
+
+    // Stripe (Optional - will be required in billing phase)
+    STRIPE_SECRET_KEY: z.string().startsWith('sk_').optional(),
+    STRIPE_WEBHOOK_SECRET: z.string().startsWith('whsec_').optional(),
 
     // Email (Optional)
     SMTP_HOST: z.string().optional(),
@@ -55,7 +63,9 @@ export const env = createEnv({
     SUPPORT_EMAIL: z.string().email().default('support@example.com'),
 
     // Node Environment
-    NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+    NODE_ENV: z
+      .enum(['development', 'test', 'production'])
+      .default('development'),
   },
 
   /**
@@ -63,8 +73,8 @@ export const env = createEnv({
    * These are exposed to the client and must be prefixed with `NEXT_PUBLIC_`.
    */
   client: {
-    // Stripe Publishable Key
-    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().startsWith('pk_'),
+    // Stripe Publishable Key (Optional - will be required in billing phase)
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().startsWith('pk_').optional(),
 
     // App URL
     NEXT_PUBLIC_APP_URL: z.string().url().optional(),
@@ -109,7 +119,8 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
 
     // Client
-    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_GOOGLE_ANALYTICS: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS,
     NEXT_PUBLIC_SENTRY_DSN: process.env.NEXT_PUBLIC_SENTRY_DSN,
@@ -122,7 +133,7 @@ export const env = createEnv({
    * This is especially useful for Docker builds.
    */
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
-  
+
   /**
    * Make it so that empty strings are treated as undefined.
    * `SOME_VAR: z.string()` and `SOME_VAR=''` will throw an error.
