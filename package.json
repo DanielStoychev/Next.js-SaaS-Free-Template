@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DanielStoychev/Next.js-SaaS-Free-Template.git"
+    "url": "git+https://github.com/DanielStoychev/Next.js-SaaS-Free-Template.git"
   },
   "bugs": {
     "url": "https://github.com/DanielStoychev/Next.js-SaaS-Free-Template/issues"
@@ -169,5 +169,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "main": "commitlint.config.js",
+  "directories": {
+    "doc": "docs"
   }
 }

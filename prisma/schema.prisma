@@ -77,15 +77,17 @@ model VerificationToken {
 
 // SaaS specific models
 model Organization {
-  id          String   @id @default(cuid())
-  name        String
-  slug        String   @unique
-  description String?
-  website     String?
-  logo        String?
-  settings    Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  description      String?
+  website          String?
+  logo             String?
+  settings         Json?
+  plan             String   @default("FREE") // FREE, STARTER, PRO, ENTERPRISE
+  stripeCustomerId String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   // Relations
   memberships   Membership[]
