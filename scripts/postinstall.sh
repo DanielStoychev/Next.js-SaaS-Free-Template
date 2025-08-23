@@ -10,13 +10,13 @@ echo "🚀 Running post-install setup..."
 # Check if we're in development
 if [ "$NODE_ENV" = "production" ]; then
   echo "📦 Production environment detected"
-  
+
   # Generate Prisma client for production
   if command -v prisma >/dev/null 2>&1; then
     echo "🔧 Generating Prisma client..."
     npx prisma generate
   fi
-  
+
   echo "✅ Production post-install complete"
   exit 0
 fi
@@ -57,7 +57,7 @@ fi
 if command -v node >/dev/null 2>&1; then
   NODE_VERSION=$(node --version | sed 's/v//')
   REQUIRED_VERSION="20.0.0"
-  
+
   if [ "$(printf '%s\n' "$REQUIRED_VERSION" "$NODE_VERSION" | sort -V | head -n1)" != "$REQUIRED_VERSION" ]; then
     echo "⚠️  Warning: Node.js version $NODE_VERSION detected, but $REQUIRED_VERSION or higher is recommended"
   else

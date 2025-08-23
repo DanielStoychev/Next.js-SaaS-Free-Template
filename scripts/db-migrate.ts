@@ -23,7 +23,9 @@ class DatabaseMigrator {
   }
 
   async migrate(): Promise<void> {
-    console.log(`🔄 Running database migrations for ${this.options.environment} environment...`)
+    console.log(
+      `🔄 Running database migrations for ${this.options.environment} environment...`
+    )
 
     try {
       // Check if Prisma schema exists
@@ -38,7 +40,9 @@ class DatabaseMigrator {
       if (this.options.preview) {
         // Preview mode - show what would be migrated
         console.log('👀 Preview mode - showing migration preview:')
-        execSync('npx prisma migrate diff --preview-feature', { stdio: 'inherit' })
+        execSync('npx prisma migrate diff --preview-feature', {
+          stdio: 'inherit',
+        })
         return
       }
 
@@ -58,9 +62,11 @@ class DatabaseMigrator {
       }
 
       console.log('✅ Database migration completed successfully!')
-
     } catch (error) {
-      console.error('❌ Migration failed:', error instanceof Error ? error.message : String(error))
+      console.error(
+        '❌ Migration failed:',
+        error instanceof Error ? error.message : String(error)
+      )
       process.exit(1)
     }
   }
@@ -71,7 +77,10 @@ class DatabaseMigrator {
       execSync('npx prisma db pull --print', { stdio: 'pipe' })
       console.log('✅ Database connection validated')
     } catch (error) {
-      console.error('❌ Database connection failed:', error instanceof Error ? error.message : String(error))
+      console.error(
+        '❌ Database connection failed:',
+        error instanceof Error ? error.message : String(error)
+      )
       throw error
     }
   }
@@ -80,11 +89,11 @@ class DatabaseMigrator {
 // CLI interface
 async function main() {
   const args = process.argv.slice(2)
-  
+
   const options: MigrationOptions = {
     environment: (process.env.NODE_ENV as any) || 'development',
     force: args.includes('--force'),
-    preview: args.includes('--preview')
+    preview: args.includes('--preview'),
   }
 
   // Override environment if specified
@@ -99,12 +108,14 @@ async function main() {
   try {
     // Validate connection first
     await migrator.validateConnection()
-    
+
     // Run migration
     await migrator.migrate()
-
   } catch (error) {
-    console.error('💥 Migration process failed:', error instanceof Error ? error.message : String(error))
+    console.error(
+      '💥 Migration process failed:',
+      error instanceof Error ? error.message : String(error)
+    )
     process.exit(1)
   }
 }
