@@ -3,13 +3,16 @@
 <div align="center">
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6)
-![Next.js](https://img.shields.io/badge/Next.js-14-black)
+![Next.js](https://img.shields.io/badge/Next.js-15.5.0-black)
 ![Stripe](https://img.shields.io/badge/Stripe-test--mode-635BFF)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-**A production-ready, ultra-modern Next.js 14 SaaS template with TypeScript, Stripe billing, NextAuth, and complete testing setup.**
+**A production-ready, ultra-modern Next.js 15 SaaS template with TypeScript, Stripe billing,
+NextAuth, and complete testing setup.**
 
-[Demo](#) · [Documentation](./docs/README.md) · [Report Bug](https://github.com/DanielStoychev/Next.js-SaaS-Free-Template/issues) · [Request Feature](https://github.com/DanielStoychev/Next.js-SaaS-Free-Template/issues)
+[Demo](#) · [Documentation](./docs/README.md) ·
+[Report Bug](https://github.com/DanielStoychev/Next.js-SaaS-Free-Template/issues) ·
+[Request Feature](https://github.com/DanielStoychev/Next.js-SaaS-Free-Template/issues)
 
 </div>
 
@@ -39,13 +42,15 @@ Visit [http://localhost:3000](http://localhost:3000) to see your SaaS in action!
 ## ✨ Features
 
 ### 🏗️ **Modern Architecture**
-- **Next.js 14** with App Router and Server Components
+
+- **Next.js 15.5.0** with App Router and Server Components
 - **TypeScript** strict mode with full type safety
 - **tRPC** for end-to-end type-safe APIs
-- **Prisma** ORM with PostgreSQL
+- **Prisma 6.14.0** ORM with PostgreSQL
 - **Server Actions** for seamless client-server communication
 
 ### 🔐 **Authentication & Authorization**
+
 - **NextAuth.js v5** with multiple providers
 - Magic link authentication
 - Role-based access control (RBAC)
@@ -53,6 +58,7 @@ Visit [http://localhost:3000](http://localhost:3000) to see your SaaS in action!
 - Session management with JWT
 
 ### 💳 **Billing & Subscriptions**
+
 - **Stripe** integration with test mode
 - Subscription management (Free, Pro, Team plans)
 - Usage-based billing with metering
@@ -60,6 +66,7 @@ Visit [http://localhost:3000](http://localhost:3000) to see your SaaS in action!
 - Customer portal for billing management
 
 ### 🎨 **UI/UX Excellence**
+
 - **Tailwind CSS** for styling
 - **shadcn/ui** components with Radix UI primitives
 - Dark/light theme support with system preference
@@ -68,6 +75,7 @@ Visit [http://localhost:3000](http://localhost:3000) to see your SaaS in action!
 - Loading states and error boundaries
 
 ### 🧪 **Testing & Quality**
+
 - **Vitest** for unit testing
 - **React Testing Library** for component testing
 - **Playwright** for end-to-end testing
@@ -76,6 +84,7 @@ Visit [http://localhost:3000](http://localhost:3000) to see your SaaS in action!
 - ESLint + Prettier with strict rules
 
 ### 📊 **Observability**
+
 - Structured logging with Pino
 - Error tracking with Sentry (optional)
 - Performance monitoring
@@ -83,6 +92,7 @@ Visit [http://localhost:3000](http://localhost:3000) to see your SaaS in action!
 - Request tracing
 
 ### 🛡️ **Security**
+
 - Input validation with Zod schemas
 - CSRF protection
 - Rate limiting
@@ -113,16 +123,16 @@ Visit [http://localhost:3000](http://localhost:3000) to see your SaaS in action!
 
 ## 🛠️ Tech Stack
 
-| Category | Technology |
-|----------|-----------|
-| **Framework** | Next.js 14, React 18, TypeScript 5.5 |
-| **Database** | PostgreSQL, Prisma ORM |
-| **Authentication** | NextAuth.js v5 |
-| **Payments** | Stripe (test mode) |
-| **API** | tRPC, React Query |
-| **UI** | Tailwind CSS, shadcn/ui, Radix UI |
-| **Testing** | Vitest, Playwright, Testing Library |
-| **Deployment** | Vercel, Docker |
+| Category           | Technology                                     |
+| ------------------ | ---------------------------------------------- |
+| **Framework**      | Next.js 15.5.0, React 18.3.1, TypeScript 5.5.4 |
+| **Database**       | PostgreSQL, Prisma ORM 6.14.0                  |
+| **Authentication** | NextAuth.js v5                                 |
+| **Payments**       | Stripe (test mode)                             |
+| **API**            | tRPC, React Query                              |
+| **UI**             | Tailwind CSS, shadcn/ui, Radix UI              |
+| **Testing**        | Vitest, Playwright, Testing Library            |
+| **Deployment**     | Vercel, Docker                                 |
 
 ## 📖 Documentation
 
@@ -157,7 +167,7 @@ make db-seed         # Seed database with sample data
 
 ## 🌟 Screenshots
 
-*Coming soon - screenshots of the application will be added here*
+_Coming soon - screenshots of the application will be added here_
 
 ## 🤝 Contributing
 

@@ -1,14 +1,12 @@
-import { ThemeProvider } from 'next-themes'
+import { cookies } from 'next/headers'
+import { ClientProviders } from './client-providers'
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export async function Providers({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies()
+
   return (
-    <ThemeProvider
-      attribute='class'
-      defaultTheme='system'
-      enableSystem
-      disableTransitionOnChange
-    >
+    <ClientProviders cookies={cookieStore.toString()}>
       {children}
-    </ThemeProvider>
+    </ClientProviders>
   )
 }

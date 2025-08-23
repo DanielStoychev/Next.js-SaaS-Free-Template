@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { cn } from '@/lib/utils'
 import { Providers } from '@/components/providers'
+import { Navigation } from '@/components/layout/navigation'
+import { Footer } from '@/components/layout/footer'
 
 import './globals.css'
 
@@ -30,13 +32,15 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     title: 'SaaS Template',
-    description: 'A modern, production-ready SaaS template built with Next.js 14',
+    description:
+      'A modern, production-ready SaaS template built with Next.js 14',
     siteName: 'SaaS Template',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'SaaS Template',
-    description: 'A modern, production-ready SaaS template built with Next.js 14',
+    description:
+      'A modern, production-ready SaaS template built with Next.js 14',
   },
   icons: {
     icon: '/favicon.ico',
@@ -51,9 +55,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <body className={cn('min-h-screen bg-background font-sans antialiased', inter.variable)}>
+      <body
+        className={cn(
+          'min-h-screen bg-background font-sans antialiased',
+          inter.variable
+        )}
+        suppressHydrationWarning
+      >
         <Providers>
-          {children}
+          <Navigation />
+          <main>{children}</main>
+          <Footer />
         </Providers>
       </body>
     </html>
