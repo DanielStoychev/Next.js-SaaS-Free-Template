@@ -47,6 +47,7 @@ export function Navigation({ className }: NavigationProps) {
             <NavLink href='/contact'>Contact</NavLink>
             <NavLink href='/components'>Components</NavLink>
             {session && <NavLink href='/dashboard'>Dashboard</NavLink>}
+            {session && <NavLink href='/dashboard/team'>Team</NavLink>}
             {session && <NavLink href='/settings'>Settings</NavLink>}
           </div>
 

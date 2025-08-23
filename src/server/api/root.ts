@@ -6,12 +6,14 @@ import { userRouter } from './routers/user'
 import { organizationRouter } from './routers/organization'
 import { analyticsRouter } from './routers/analytics'
 import { subscriptionRouter } from './routers/subscription'
+import { teamRouter } from './routers/team'
 
 export const appRouter = createTRPCRouter({
   user: userRouter,
   organization: organizationRouter,
   analytics: analyticsRouter,
   subscription: subscriptionRouter,
+  team: teamRouter,
 })
 
 export type AppRouter = typeof appRouter

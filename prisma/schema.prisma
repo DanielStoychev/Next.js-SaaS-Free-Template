@@ -62,6 +62,7 @@ model User {
   accounts    Account[]
   sessions    Session[]
   memberships Membership[]
+  teamInvitations TeamInvitation[] // Invitations sent by this user
 
   @@map("users")
 }
@@ -93,6 +94,7 @@ model Organization {
   memberships   Membership[]
   subscriptions Subscription[]
   auditLogs     AuditLog[]
+  teamInvitations TeamInvitation[]
 
   @@map("organizations")
 }
@@ -100,6 +102,7 @@ model Organization {
 model Membership {
   id             String           @id @default(cuid())
   role           MembershipRole
+  permissions    String?          // JSON string of custom permissions
   userId         String
   organizationId String
   createdAt      DateTime         @default(now())
@@ -183,11 +186,36 @@ model AuditLog {
   @@map("audit_logs")
 }
 
+model TeamInvitation {
+  id             String              @id @default(cuid())
+  organizationId String
+  email          String
+  role           MembershipRole
+  token          String              @unique
+  message        String?
+  permissions    String?             // JSON string of permissions
+  status         TeamInvitationStatus @default(PENDING)
+  invitedById    String
+  expiresAt      DateTime
+  acceptedAt     DateTime?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invitedBy    User         @relation(fields: [invitedById], references: [id])
+
+  @@unique([organizationId, email, status])
+  @@map("team_invitations")
+}
+
 // Enums
 enum MembershipRole {
   OWNER
   ADMIN
+  MANAGER
   MEMBER
+  GUEST
 
   @@map("membership_role")
 }
@@ -207,6 +235,16 @@ enum Interval {
   YEAR
 
   @@map("interval")
+}
+
+enum TeamInvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+  REVOKED
+
+  @@map("team_invitation_status")
 }
 
 // Indexes for performance
