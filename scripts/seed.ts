@@ -2,7 +2,7 @@
 
 /**
  * Database seed script
- * Populates the database with sample data for development
+ * Populates the database with sample data for development and colorful analytics
  */
 
 import { PrismaClient } from '@prisma/client'
@@ -23,8 +23,8 @@ class DatabaseSeeder {
 
   constructor(options: SeedOptions = { environment: 'development' }) {
     this.options = {
-      userCount: 10,
-      organizationCount: 3,
+      userCount: 50, // Increased for better analytics data
+      organizationCount: 5,
       ...options,
     }
   }
