@@ -5,17 +5,17 @@ module.exports = {
       2,
       'always',
       [
-        'feat',     // New feature
-        'fix',      // Bug fix
-        'docs',     // Documentation only changes
-        'style',    // Changes that don't affect the meaning of the code
+        'feat', // New feature
+        'fix', // Bug fix
+        'docs', // Documentation only changes
+        'style', // Changes that don't affect the meaning of the code
         'refactor', // Code change that neither fixes a bug nor adds a feature
-        'perf',     // Code change that improves performance
-        'test',     // Adding missing or correcting existing tests
-        'chore',    // Changes to the build process or auxiliary tools
-        'ci',       // Changes to CI configuration files and scripts
-        'build',    // Changes that affect the build system or external dependencies
-        'revert',   // Reverts a previous commit
+        'perf', // Code change that improves performance
+        'test', // Adding missing or correcting existing tests
+        'chore', // Changes to the build process or auxiliary tools
+        'ci', // Changes to CI configuration files and scripts
+        'build', // Changes that affect the build system or external dependencies
+        'revert', // Reverts a previous commit
       ],
     ],
     'type-case': [2, 'always', 'lower-case'],
@@ -28,5 +28,5 @@ module.exports = {
     'body-leading-blank': [2, 'always'],
     'footer-leading-blank': [2, 'always'],
   },
-  ignores: [(commit) => commit.includes('WIP')],
+  ignores: [commit => commit.includes('WIP')],
 }
