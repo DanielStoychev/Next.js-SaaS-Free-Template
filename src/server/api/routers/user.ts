@@ -178,7 +178,9 @@ export const userRouter = createTRPCRouter({
       z.object({
         emailNotifications: z.boolean().optional(),
         marketingEmails: z.boolean().optional(),
-        theme: z.enum(['neon', 'electric', 'cyber', 'aurora', 'plasma']).optional(),
+        theme: z
+          .enum(['neon', 'electric', 'cyber', 'aurora', 'plasma'])
+          .optional(),
         timezone: z.string().optional(),
         language: z.string().optional(),
       })
@@ -286,7 +288,10 @@ export const userRouter = createTRPCRouter({
         }
 
         // Verify password
-        const isValidPassword = await bcrypt.compare(input.password, user.password)
+        const isValidPassword = await bcrypt.compare(
+          input.password,
+          user.password
+        )
 
         if (!isValidPassword) {
           throw new TRPCError({

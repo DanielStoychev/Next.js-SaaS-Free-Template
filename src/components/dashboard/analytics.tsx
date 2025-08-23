@@ -257,13 +257,18 @@ function DonutChart({
 }
 
 export function AnalyticsSection() {
-  const { data: dashboardStats, isLoading } = api.analytics.getDashboardStats.useQuery()
-  const { data: revenueChart } = api.analytics.getRevenueChart.useQuery({ period: '7d' })
-  const { data: activityFeed } = api.analytics.getActivityFeed.useQuery({ limit: 5 })
-  
+  const { data: dashboardStats, isLoading } =
+    api.analytics.getDashboardStats.useQuery()
+  const { data: revenueChart } = api.analytics.getRevenueChart.useQuery({
+    period: '7d',
+  })
+  const { data: activityFeed } = api.analytics.getActivityFeed.useQuery({
+    limit: 5,
+  })
+
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className='flex items-center justify-center h-64'>
         <LoadingSpinner />
       </div>
     )
@@ -273,9 +278,12 @@ export function AnalyticsSection() {
     {
       title: 'Total Revenue',
       value: `$${dashboardStats?.totalRevenue?.toLocaleString() ?? '0'}`,
-      change: { 
-        value: `+${dashboardStats?.revenueGrowth?.toFixed(1) ?? '0'}%`, 
-        type: (dashboardStats?.revenueGrowth ?? 0) >= 0 ? 'up' as const : 'down' as const 
+      change: {
+        value: `+${dashboardStats?.revenueGrowth?.toFixed(1) ?? '0'}%`,
+        type:
+          (dashboardStats?.revenueGrowth ?? 0) >= 0
+            ? ('up' as const)
+            : ('down' as const),
       },
       icon: DollarSign,
       color: 'neon',
@@ -283,9 +291,12 @@ export function AnalyticsSection() {
     {
       title: 'Total Users',
       value: dashboardStats?.totalUsers?.toLocaleString() ?? '0',
-      change: { 
-        value: `+${dashboardStats?.userGrowth?.toFixed(1) ?? '0'}%`, 
-        type: (dashboardStats?.userGrowth ?? 0) >= 0 ? 'up' as const : 'down' as const 
+      change: {
+        value: `+${dashboardStats?.userGrowth?.toFixed(1) ?? '0'}%`,
+        type:
+          (dashboardStats?.userGrowth ?? 0) >= 0
+            ? ('up' as const)
+            : ('down' as const),
       },
       icon: Users,
       color: 'electric',
@@ -293,9 +304,9 @@ export function AnalyticsSection() {
     {
       title: 'Organization Users',
       value: dashboardStats?.organizationUsers?.toLocaleString() ?? '0',
-      change: { 
-        value: `+15%`, 
-        type: 'up' as const 
+      change: {
+        value: `+15%`,
+        type: 'up' as const,
       },
       icon: Eye,
       color: 'cyber',
@@ -303,9 +314,12 @@ export function AnalyticsSection() {
     {
       title: 'Conversion Rate',
       value: `${dashboardStats?.conversionRate?.toFixed(1) ?? '0'}%`,
-      change: { 
-        value: `${dashboardStats?.conversionGrowth ? (dashboardStats.conversionGrowth >= 0 ? '+' : '') + dashboardStats.conversionGrowth.toFixed(1) : '0'}%`, 
-        type: (dashboardStats?.conversionGrowth ?? 0) >= 0 ? 'up' as const : 'down' as const 
+      change: {
+        value: `${dashboardStats?.conversionGrowth ? (dashboardStats.conversionGrowth >= 0 ? '+' : '') + dashboardStats.conversionGrowth.toFixed(1) : '0'}%`,
+        type:
+          (dashboardStats?.conversionGrowth ?? 0) >= 0
+            ? ('up' as const)
+            : ('down' as const),
       },
       icon: Activity,
       color: 'aurora',
@@ -314,18 +328,18 @@ export function AnalyticsSection() {
 
   const colorGradients = [
     'from-neon-400 to-neon-600',
-    'from-electric-400 to-electric-600', 
+    'from-electric-400 to-electric-600',
     'from-cyber-400 to-cyber-600',
     'from-aurora-400 to-aurora-600',
     'from-plasma-400 to-plasma-600',
     'from-neon-400 to-electric-600',
-    'from-cyber-400 to-aurora-600'
+    'from-cyber-400 to-aurora-600',
   ]
 
   const barChartData: ChartData[] = revenueChart?.map((item, index) => ({
     label: item.name ?? item.date ?? 'N/A',
     value: item.revenue,
-    color: colorGradients[index % colorGradients.length]!
+    color: colorGradients[index % colorGradients.length]!,
   })) ?? [
     { label: 'Mon', value: 12, color: 'from-neon-400 to-neon-600' },
     { label: 'Tue', value: 19, color: 'from-electric-400 to-electric-600' },
@@ -420,11 +434,20 @@ export function AnalyticsSection() {
           <CardContent className='space-y-3'>
             <div className='text-sm text-muted-foreground'>
               {activityFeed?.map((activity: any, index: number) => {
-                const colors = ['neon-400', 'electric-400', 'cyber-400', 'aurora-400', 'plasma-400']
+                const colors = [
+                  'neon-400',
+                  'electric-400',
+                  'cyber-400',
+                  'aurora-400',
+                  'plasma-400',
+                ]
                 const colorClass = colors[index % colors.length]
-                
+
                 return (
-                  <div key={activity.id} className='flex items-center space-x-2 mb-2'>
+                  <div
+                    key={activity.id}
+                    className='flex items-center space-x-2 mb-2'
+                  >
                     <div className={`w-2 h-2 rounded-full bg-${colorClass}`} />
                     <span>{activity.description}</span>
                   </div>

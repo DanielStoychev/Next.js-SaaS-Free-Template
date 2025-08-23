@@ -17,16 +17,19 @@ Thank you for your interest in contributing to this project! 🎉
 ## Development Setup
 
 1. **Install dependencies:**
+
    ```bash
    pnpm install
    ```
 
 2. **Set up environment variables:**
+
    ```bash
    cp .env.example .env.local
    ```
 
 3. **Initialize the database:**
+
    ```bash
    pnpm db:push
    pnpm db:seed
@@ -68,24 +71,28 @@ Please use clear and descriptive commit messages:
 We welcome contributions in these areas:
 
 ### 🎨 UI/UX Improvements
+
 - New color themes
 - Component enhancements
 - Mobile responsiveness
 - Accessibility improvements
 
 ### 🔧 Features
+
 - Additional authentication providers
 - New dashboard widgets
 - Integration with other services
 - Performance optimizations
 
 ### 📚 Documentation
+
 - Tutorial improvements
 - Code examples
 - API documentation
 - Deployment guides
 
 ### 🧪 Testing
+
 - Unit tests
 - Integration tests
 - End-to-end tests
@@ -99,11 +106,13 @@ We welcome contributions in these areas:
 
 ## Code of Conduct
 
-Please be respectful and constructive in all interactions. We want to maintain a welcoming environment for all contributors.
+Please be respectful and constructive in all interactions. We want to maintain a welcoming
+environment for all contributors.
 
 ## License
 
-By contributing to this project, you agree that your contributions will be licensed under the MIT License.
+By contributing to this project, you agree that your contributions will be licensed under the MIT
+License.
 
 ---
 

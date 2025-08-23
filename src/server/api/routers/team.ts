@@ -9,7 +9,7 @@ enum InvitationStatus {
   ACCEPTED = 'ACCEPTED',
   DECLINED = 'DECLINED',
   EXPIRED = 'EXPIRED',
-  REVOKED = 'REVOKED'
+  REVOKED = 'REVOKED',
 }
 
 // Enhanced team roles with granular permissions
@@ -45,28 +45,19 @@ const ROLE_PERMISSIONS = {
   MANAGER: {
     name: 'Manager',
     level: 60,
-    permissions: [
-      'view.analytics',
-      'manage.projects',
-      'invite.members',
-    ],
+    permissions: ['view.analytics', 'manage.projects', 'invite.members'],
     description: 'Can manage projects and invite team members',
   },
   MEMBER: {
     name: 'Member',
     level: 40,
-    permissions: [
-      'view.projects',
-      'edit.projects',
-    ],
+    permissions: ['view.projects', 'edit.projects'],
     description: 'Can view and edit assigned projects',
   },
   GUEST: {
     name: 'Guest',
     level: 20,
-    permissions: [
-      'view.projects',
-    ],
+    permissions: ['view.projects'],
     description: 'Read-only access to assigned projects',
   },
 } as const
@@ -81,7 +72,9 @@ export const teamRouter = createTRPCRouter({
         organizationId: z.string(),
         includeInvitations: z.boolean().default(false),
         search: z.string().optional(),
-        role: z.enum(['OWNER', 'ADMIN', 'MANAGER', 'MEMBER', 'GUEST']).optional(),
+        role: z
+          .enum(['OWNER', 'ADMIN', 'MANAGER', 'MEMBER', 'GUEST'])
+          .optional(),
         limit: z.number().min(1).max(100).default(50),
         offset: z.number().min(0).default(0),
       })
@@ -176,8 +169,11 @@ export const teamRouter = createTRPCRouter({
           role: member.role,
           joinedAt: member.createdAt,
           user: member.user,
-          permissions: ROLE_PERMISSIONS[member.role as keyof typeof ROLE_PERMISSIONS]?.permissions || [],
-          roleInfo: ROLE_PERMISSIONS[member.role as keyof typeof ROLE_PERMISSIONS],
+          permissions:
+            ROLE_PERMISSIONS[member.role as keyof typeof ROLE_PERMISSIONS]
+              ?.permissions || [],
+          roleInfo:
+            ROLE_PERMISSIONS[member.role as keyof typeof ROLE_PERMISSIONS],
         })),
         invitations: invitations.map((invitation: any) => ({
           id: invitation.id,
@@ -274,7 +270,9 @@ export const teamRouter = createTRPCRouter({
           role: input.role,
           token,
           message: input.message,
-          permissions: input.permissions ? JSON.stringify(input.permissions) : null,
+          permissions: input.permissions
+            ? JSON.stringify(input.permissions)
+            : null,
           invitedById: ctx.session.user.id,
           status: 'PENDING',
           expiresAt,
@@ -291,7 +289,9 @@ export const teamRouter = createTRPCRouter({
       })
 
       // TODO: Send invitation email
-      console.log(`Invitation sent to ${input.email} for ${invitation.organization.name}`)
+      console.log(
+        `Invitation sent to ${input.email} for ${invitation.organization.name}`
+      )
 
       return {
         id: invitation.id,
@@ -458,7 +458,8 @@ export const teamRouter = createTRPCRouter({
       // Check permissions
       const canRemove =
         currentUserMembership.role === 'OWNER' ||
-        (currentUserMembership.role === 'ADMIN' && membership.role !== 'OWNER') ||
+        (currentUserMembership.role === 'ADMIN' &&
+          membership.role !== 'OWNER') ||
         membership.userId === ctx.session.user.id // Users can remove themselves
 
       if (!canRemove) {
@@ -495,7 +496,10 @@ export const teamRouter = createTRPCRouter({
         data: {
           userId: ctx.session.user.id,
           organizationId: membership.organizationId,
-          action: membership.userId === ctx.session.user.id ? 'MEMBER_LEFT' : 'MEMBER_REMOVED',
+          action:
+            membership.userId === ctx.session.user.id
+              ? 'MEMBER_LEFT'
+              : 'MEMBER_REMOVED',
           resource: 'MEMBERSHIP',
           resourceId: input.membershipId,
           metadata: {
@@ -573,7 +577,9 @@ export const teamRouter = createTRPCRouter({
       })
 
       // Get user details for activities
-      const userIds = activities.map((a: any) => a.userId).filter(Boolean) as string[]
+      const userIds = activities
+        .map((a: any) => a.userId)
+        .filter(Boolean) as string[]
       const users = await ctx.db.user.findMany({
         where: { id: { in: userIds } },
         select: {
@@ -629,7 +635,9 @@ export const teamRouter = createTRPCRouter({
           ...role,
         })),
         currentUserRole: membership.role,
-        currentUserPermissions: ROLE_PERMISSIONS[membership.role as keyof typeof ROLE_PERMISSIONS]?.permissions || [],
+        currentUserPermissions:
+          ROLE_PERMISSIONS[membership.role as keyof typeof ROLE_PERMISSIONS]
+            ?.permissions || [],
       }
     }),
 })
@@ -639,7 +647,7 @@ export const teamRouter = createTRPCRouter({
  */
 function generateActivityDescription(activity: any): string {
   const metadata = activity.metadata || {}
-  
+
   switch (activity.action) {
     case 'MEMBER_INVITED':
       return `invited ${metadata.email} as ${metadata.role}`

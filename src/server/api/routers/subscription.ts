@@ -109,7 +109,7 @@ export const subscriptionRouter = createTRPCRouter({
 
       // Get the user's primary organization (first one they belong to)
       const primaryMembership = user.memberships[0]
-      
+
       if (!primaryMembership) {
         return {
           plan: 'FREE',
@@ -121,7 +121,7 @@ export const subscriptionRouter = createTRPCRouter({
       }
 
       const organization = primaryMembership.organization
-      
+
       // If organization has a Stripe customer ID, get subscription from Stripe
       if (organization.stripeCustomerId) {
         try {
@@ -132,12 +132,14 @@ export const subscriptionRouter = createTRPCRouter({
           })
 
           const subscription = subscriptions.data[0]
-          
+
           if (subscription) {
             return {
               plan: organization.plan,
               status: subscription.status,
-              currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+              currentPeriodEnd: new Date(
+                subscription.current_period_end * 1000
+              ),
               cancelAtPeriodEnd: subscription.cancel_at_period_end,
               organization: {
                 id: organization.id,
@@ -182,7 +184,7 @@ export const subscriptionRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       try {
         const plan = PRICING_PLANS[input.planId]
-        
+
         if (!plan.stripePriceId) {
           throw new TRPCError({
             code: 'BAD_REQUEST',
@@ -471,7 +473,7 @@ export const subscriptionRouter = createTRPCRouter({
         })
 
         const subscription = subscriptions.data[0]
-        
+
         if (!subscription) {
           throw new TRPCError({
             code: 'NOT_FOUND',
@@ -486,7 +488,8 @@ export const subscriptionRouter = createTRPCRouter({
 
         return {
           success: true,
-          message: 'Subscription will be canceled at the end of the billing period',
+          message:
+            'Subscription will be canceled at the end of the billing period',
         }
       } catch (error) {
         if (error instanceof TRPCError) {
@@ -563,7 +566,7 @@ export const subscriptionRouter = createTRPCRouter({
           limit: input.limit,
         })
 
-        return invoices.data.map((invoice) => ({
+        return invoices.data.map(invoice => ({
           id: invoice.id,
           number: invoice.number,
           status: invoice.status,
@@ -571,8 +574,8 @@ export const subscriptionRouter = createTRPCRouter({
           currency: invoice.currency,
           date: new Date(invoice.created * 1000),
           dueDate: invoice.due_date ? new Date(invoice.due_date * 1000) : null,
-          paidDate: invoice.status_transitions.paid_at 
-            ? new Date(invoice.status_transitions.paid_at * 1000) 
+          paidDate: invoice.status_transitions.paid_at
+            ? new Date(invoice.status_transitions.paid_at * 1000)
             : null,
           downloadUrl: invoice.hosted_invoice_url,
           description: invoice.description,

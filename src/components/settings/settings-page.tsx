@@ -2,7 +2,16 @@
 
 import * as React from 'react'
 import { motion } from 'framer-motion'
-import { User, Bell, Shield, Palette, Database, Zap, Save, AlertTriangle } from 'lucide-react'
+import {
+  User,
+  Bell,
+  Shield,
+  Palette,
+  Database,
+  Zap,
+  Save,
+  AlertTriangle,
+} from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 
@@ -100,11 +109,13 @@ function SettingsSection({
 export function SettingsPage({}: SettingsPageProps) {
   const { data: session } = useSession()
   const router = useRouter()
-  
+
   // Fetch user profile data
-  const { data: userProfile, isLoading: profileLoading } = api.user.getCurrentUser.useQuery()
-  const { data: preferences, isLoading: preferencesLoading } = api.user.getPreferences.useQuery()
-  
+  const { data: userProfile, isLoading: profileLoading } =
+    api.user.getCurrentUser.useQuery()
+  const { data: preferences, isLoading: preferencesLoading } =
+    api.user.getPreferences.useQuery()
+
   // Mutations
   const updateProfile = api.user.updateProfile.useMutation()
   const changePassword = api.user.changePassword.useMutation()
@@ -112,7 +123,9 @@ export function SettingsPage({}: SettingsPageProps) {
   const deleteAccount = api.user.deleteAccount.useMutation()
 
   // Queries
-  const exportDataQuery = api.user.exportData.useQuery(undefined, { enabled: false })
+  const exportDataQuery = api.user.exportData.useQuery(undefined, {
+    enabled: false,
+  })
 
   // Form states
   const [profileForm, setProfileForm] = React.useState({
@@ -163,7 +176,11 @@ export function SettingsPage({}: SettingsPageProps) {
         newPassword: passwordForm.newPassword,
       })
       alert('Password changed successfully')
-      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
+      setPasswordForm({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      })
     } catch (error) {
       alert('Failed to change password')
     }
@@ -174,7 +191,9 @@ export function SettingsPage({}: SettingsPageProps) {
       const data = await exportDataQuery.refetch()
       if (data.data) {
         // Create and download JSON file
-        const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' })
+        const blob = new Blob([JSON.stringify(data.data, null, 2)], {
+          type: 'application/json',
+        })
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
         a.href = url
@@ -210,7 +229,7 @@ export function SettingsPage({}: SettingsPageProps) {
 
   if (profileLoading || preferencesLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className='flex items-center justify-center h-64'>
         <LoadingSpinner />
       </div>
     )
@@ -218,7 +237,7 @@ export function SettingsPage({}: SettingsPageProps) {
 
   if (!session || !userProfile) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className='flex items-center justify-center h-64'>
         <p>Please sign in to access settings</p>
       </div>
     )
@@ -276,44 +295,60 @@ export function SettingsPage({}: SettingsPageProps) {
             <div className='space-y-4'>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 <div>
-                  <Label htmlFor='name' className='text-sm font-medium text-muted-foreground'>
+                  <Label
+                    htmlFor='name'
+                    className='text-sm font-medium text-muted-foreground'
+                  >
                     Name
                   </Label>
                   <Input
                     id='name'
                     value={profileForm.name}
-                    onChange={(e) => setProfileForm(prev => ({ ...prev, name: e.target.value }))}
+                    onChange={e =>
+                      setProfileForm(prev => ({
+                        ...prev,
+                        name: e.target.value,
+                      }))
+                    }
                     placeholder='Enter your name'
                     className='mt-1'
                   />
                 </div>
                 <div>
-                  <Label htmlFor='email' className='text-sm font-medium text-muted-foreground'>
+                  <Label
+                    htmlFor='email'
+                    className='text-sm font-medium text-muted-foreground'
+                  >
                     Email
                   </Label>
                   <Input
                     id='email'
                     type='email'
                     value={profileForm.email}
-                    onChange={(e) => setProfileForm(prev => ({ ...prev, email: e.target.value }))}
+                    onChange={e =>
+                      setProfileForm(prev => ({
+                        ...prev,
+                        email: e.target.value,
+                      }))
+                    }
                     placeholder='Enter your email'
                     className='mt-1'
                   />
                 </div>
               </div>
-              <Button 
+              <Button
                 onClick={handleUpdateProfile}
                 disabled={updateProfile.isPending}
                 className='gradient-neon text-white hover:shadow-lg hover:shadow-neon-400/25'
               >
                 {updateProfile.isPending ? (
                   <>
-                    <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    <div className='w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white/30 border-t-white' />
                     Updating...
                   </>
                 ) : (
                   <>
-                    <Save className="w-4 h-4 mr-2" />
+                    <Save className='w-4 h-4 mr-2' />
                     Update Profile
                   </>
                 )}
@@ -394,46 +429,67 @@ export function SettingsPage({}: SettingsPageProps) {
                       variant='outline'
                       className='glass-cyber border-cyber-400/30'
                     >
-                      <Shield className="w-4 h-4 mr-2" />
+                      <Shield className='w-4 h-4 mr-2' />
                       Change Password
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="glass-cyber border-cyber-400/30">
+                  <DialogContent className='glass-cyber border-cyber-400/30'>
                     <DialogHeader>
-                      <DialogTitle className="gradient-text">Change Password</DialogTitle>
+                      <DialogTitle className='gradient-text'>
+                        Change Password
+                      </DialogTitle>
                       <DialogDescription>
                         Enter your current password and choose a new one
                       </DialogDescription>
                     </DialogHeader>
-                    <div className="space-y-4">
+                    <div className='space-y-4'>
                       <div>
-                        <Label htmlFor="currentPassword">Current Password</Label>
+                        <Label htmlFor='currentPassword'>
+                          Current Password
+                        </Label>
                         <Input
-                          id="currentPassword"
-                          type="password"
+                          id='currentPassword'
+                          type='password'
                           value={passwordForm.currentPassword}
-                          onChange={(e) => setPasswordForm(prev => ({ ...prev, currentPassword: e.target.value }))}
-                          placeholder="Enter current password"
+                          onChange={e =>
+                            setPasswordForm(prev => ({
+                              ...prev,
+                              currentPassword: e.target.value,
+                            }))
+                          }
+                          placeholder='Enter current password'
                         />
                       </div>
                       <div>
-                        <Label htmlFor="newPassword">New Password</Label>
+                        <Label htmlFor='newPassword'>New Password</Label>
                         <Input
-                          id="newPassword"
-                          type="password"
+                          id='newPassword'
+                          type='password'
                           value={passwordForm.newPassword}
-                          onChange={(e) => setPasswordForm(prev => ({ ...prev, newPassword: e.target.value }))}
-                          placeholder="Enter new password"
+                          onChange={e =>
+                            setPasswordForm(prev => ({
+                              ...prev,
+                              newPassword: e.target.value,
+                            }))
+                          }
+                          placeholder='Enter new password'
                         />
                       </div>
                       <div>
-                        <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                        <Label htmlFor='confirmPassword'>
+                          Confirm New Password
+                        </Label>
                         <Input
-                          id="confirmPassword"
-                          type="password"
+                          id='confirmPassword'
+                          type='password'
                           value={passwordForm.confirmPassword}
-                          onChange={(e) => setPasswordForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                          placeholder="Confirm new password"
+                          onChange={e =>
+                            setPasswordForm(prev => ({
+                              ...prev,
+                              confirmPassword: e.target.value,
+                            }))
+                          }
+                          placeholder='Confirm new password'
                         />
                       </div>
                     </div>
@@ -445,7 +501,7 @@ export function SettingsPage({}: SettingsPageProps) {
                       >
                         {changePassword.isPending ? (
                           <>
-                            <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                            <div className='w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white/30 border-t-white' />
                             Changing...
                           </>
                         ) : (
@@ -539,12 +595,12 @@ export function SettingsPage({}: SettingsPageProps) {
                 >
                   {exportDataQuery.isFetching ? (
                     <>
-                      <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-plasma-400/30 border-t-plasma-400" />
+                      <div className='w-4 h-4 mr-2 animate-spin rounded-full border-2 border-plasma-400/30 border-t-plasma-400' />
                       Exporting...
                     </>
                   ) : (
                     <>
-                      <Database className="w-4 h-4 mr-2" />
+                      <Database className='w-4 h-4 mr-2' />
                       Export
                     </>
                   )}
@@ -616,59 +672,78 @@ export function SettingsPage({}: SettingsPageProps) {
             <div className='space-y-4'>
               <div className='p-4 border border-red-300 bg-red-50 dark:bg-red-900/10 dark:border-red-800 rounded-lg'>
                 <div className='flex items-start space-x-3'>
-                  <AlertTriangle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <div className="flex-1">
-                    <h4 className="text-sm font-semibold text-red-800 dark:text-red-400">Delete Account</h4>
-                    <p className="text-sm text-red-700 dark:text-red-300 mt-1">
-                      Once you delete your account, there is no going back. This will permanently delete your profile, posts, and all associated data.
+                  <AlertTriangle className='w-5 h-5 text-red-500 mt-0.5 flex-shrink-0' />
+                  <div className='flex-1'>
+                    <h4 className='text-sm font-semibold text-red-800 dark:text-red-400'>
+                      Delete Account
+                    </h4>
+                    <p className='text-sm text-red-700 dark:text-red-300 mt-1'>
+                      Once you delete your account, there is no going back. This
+                      will permanently delete your profile, posts, and all
+                      associated data.
                     </p>
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button 
-                          variant="destructive" 
-                          size="sm" 
-                          className="mt-3"
+                        <Button
+                          variant='destructive'
+                          size='sm'
+                          className='mt-3'
                         >
                           Delete Account
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="glass-aurora border-red-400/30">
+                      <DialogContent className='glass-aurora border-red-400/30'>
                         <DialogHeader>
-                          <DialogTitle className="text-red-400">Delete Account</DialogTitle>
+                          <DialogTitle className='text-red-400'>
+                            Delete Account
+                          </DialogTitle>
                           <DialogDescription>
-                            This action cannot be undone. Please enter your password and type "DELETE" to confirm.
+                            This action cannot be undone. Please enter your
+                            password and type "DELETE" to confirm.
                           </DialogDescription>
                         </DialogHeader>
-                        <div className="space-y-4">
+                        <div className='space-y-4'>
                           <div>
-                            <Label htmlFor="deletePassword">Password</Label>
+                            <Label htmlFor='deletePassword'>Password</Label>
                             <Input
-                              id="deletePassword"
-                              type="password"
+                              id='deletePassword'
+                              type='password'
                               value={deleteForm.password}
-                              onChange={(e) => setDeleteForm(prev => ({ ...prev, password: e.target.value }))}
-                              placeholder="Enter your password"
+                              onChange={e =>
+                                setDeleteForm(prev => ({
+                                  ...prev,
+                                  password: e.target.value,
+                                }))
+                              }
+                              placeholder='Enter your password'
                             />
                           </div>
                           <div>
-                            <Label htmlFor="deleteConfirmation">Type "DELETE" to confirm</Label>
+                            <Label htmlFor='deleteConfirmation'>
+                              Type "DELETE" to confirm
+                            </Label>
                             <Input
-                              id="deleteConfirmation"
+                              id='deleteConfirmation'
                               value={deleteForm.confirmation}
-                              onChange={(e) => setDeleteForm(prev => ({ ...prev, confirmation: e.target.value }))}
-                              placeholder="Type DELETE"
+                              onChange={e =>
+                                setDeleteForm(prev => ({
+                                  ...prev,
+                                  confirmation: e.target.value,
+                                }))
+                              }
+                              placeholder='Type DELETE'
                             />
                           </div>
                         </div>
                         <DialogFooter>
                           <Button
-                            variant="destructive"
+                            variant='destructive'
                             onClick={handleDeleteAccount}
                             disabled={deleteAccount.isPending}
                           >
                             {deleteAccount.isPending ? (
                               <>
-                                <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                                <div className='w-4 h-4 mr-2 animate-spin rounded-full border-2 border-white/30 border-t-white' />
                                 Deleting...
                               </>
                             ) : (

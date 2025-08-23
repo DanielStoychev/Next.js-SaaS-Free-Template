@@ -33,7 +33,9 @@ export async function POST(request: NextRequest) {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret)
   } catch (error) {
     console.error('Webhook signature verification failed:', error)
-    return new Response('Webhook signature verification failed', { status: 400 })
+    return new Response('Webhook signature verification failed', {
+      status: 400,
+    })
   }
 
   try {
@@ -113,7 +115,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   try {
     const customerId = subscription.customer as string
-    
+
     // Find organization by Stripe customer ID
     const organization = await db.organization.findFirst({
       where: { stripeCustomerId: customerId },
@@ -128,7 +130,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     let planId = 'FREE'
     if (subscription.items.data.length > 0) {
       const priceId = subscription.items.data[0]?.price.id
-      
+
       if (priceId === STRIPE_STARTER_PRICE_ID) {
         planId = 'STARTER'
       } else if (priceId === STRIPE_PRO_PRICE_ID) {
@@ -145,7 +147,9 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
 
     if (subscription.status === 'active') {
       updateData.plan = planId
-    } else if (['canceled', 'unpaid', 'past_due'].includes(subscription.status)) {
+    } else if (
+      ['canceled', 'unpaid', 'past_due'].includes(subscription.status)
+    ) {
       // Downgrade to free plan if subscription is not active
       updateData.plan = 'FREE'
     }
@@ -155,7 +159,9 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
       data: updateData,
     })
 
-    console.log(`Organization ${organization.id} plan updated to ${updateData.plan || planId}`)
+    console.log(
+      `Organization ${organization.id} plan updated to ${updateData.plan || planId}`
+    )
   } catch (error) {
     console.error('Error handling subscription update:', error)
   }
@@ -167,7 +173,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   try {
     const customerId = subscription.customer as string
-    
+
     const organization = await db.organization.findFirst({
       where: { stripeCustomerId: customerId },
     })
@@ -198,7 +204,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
   try {
     const customerId = invoice.customer as string
-    
+
     const organization = await db.organization.findFirst({
       where: { stripeCustomerId: customerId },
     })
@@ -226,7 +232,7 @@ async function handleInvoicePaymentSucceeded(invoice: Stripe.Invoice) {
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
   try {
     const customerId = invoice.customer as string
-    
+
     const organization = await db.organization.findFirst({
       where: { stripeCustomerId: customerId },
     })
